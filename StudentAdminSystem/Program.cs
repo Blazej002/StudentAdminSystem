@@ -25,6 +25,9 @@
             var st1Eng = new Grades(Students[0], Courses[1], 75);
 
             StartPrompt();
+            Students[0]._Grades.Add(new Grades(Students[0], Courses[0], 98));
+            Students[0]._Grades.Add(new Grades(Students[0], Courses[1], 20));
+            Students[0]._Grades.Add(new Grades(Students[0], Courses[2], 70));
 
             while (true)
             {
@@ -76,14 +79,22 @@
                     ShowGrades(students, courses);
                     break;
                 case "2":
-                    NewStudent();
+                    Console.WriteLine("Whats the name of the student?");
+                    var newStudentsName = Console.ReadLine();
+                    Console.WriteLine("Whats the age of the student?");
+                    var newStudentsAgeString = Console.ReadLine();
+                    var newStudentsAge = Convert.ToInt32(newStudentsAgeString);
+                    NewStudent(students,
+                        new Student(newStudentsName, newStudentsAge, courses, (100 + students.Count + 1)));
+                    break;
+                case "3":
                     break;
             }
         }
 
-        private static void NewStudent()
+        private static void NewStudent(List<Student> students, Student newStudent)
         {
-            
+            students.Add(newStudent);
         }
 
         private static void ShowGrades(List<Student> students, List<Fag> courses)
@@ -104,6 +115,10 @@
 
             if (inputStd == "1")
             {
+                student.ShowStudentGrade();
+                Console.ReadKey();
+
+
             }
             else if (inputStd == "2")
             {
@@ -112,7 +127,7 @@
                 var subj = Console.ReadLine();
                 var a = Convert.ToInt32(subj);
 
-                var SubIndex = Find(courses, a);
+                var SubIndex = Find(student.StudieProg, a);
                 var Subj = courses[SubIndex];
 
 
@@ -121,7 +136,6 @@
 
 
                 AddGrade(student, Subj, Convert.ToInt32(grd));
-
             }
             else if (inputStd == "3")
             {
@@ -153,9 +167,10 @@
             return found;
         }
 
-        private static void AddGrade(Student student, Fag courses, int grade)
+        private static void AddGrade(Student student, Fag subject, int grade)
         {
-
+            student.ShowStdInfo();
+            student._Grades.Add(new Grades(student, subject, grade));
         }
 
 
@@ -216,6 +231,7 @@
             public int Age;
             public int Id;
             public List<Fag> StudieProg;
+            public List<Grades> _Grades;
 
             public Student(string name, int age, List<Fag> studieProg, int id)
             {
@@ -223,6 +239,7 @@
                 Age = age;
                 Id = id;
                 StudieProg = studieProg;
+                _Grades = new List<Grades>();
             }
 
             public void ShowStdInfo()
@@ -240,6 +257,14 @@
                 }
 
                 Console.WriteLine("----------");
+            }
+
+            public void ShowStudentGrade()
+            {
+                foreach (var grade in _Grades)
+                {
+                    grade.showGrade();
+                }
             }
         }
 
@@ -268,11 +293,12 @@
             }
         }
 
-        class Grades
+        internal class Grades
         {
             public Student Student;
             public Fag Fag;
             public int Grade;
+
 
             public Grades(Student student, Fag fag, int grade)
             {
